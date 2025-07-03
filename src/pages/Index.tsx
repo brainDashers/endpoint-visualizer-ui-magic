@@ -1,5 +1,6 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   return (
@@ -29,6 +30,7 @@ const Index = () => {
 }`}
                   </pre>
                 </div>
+                <Button className="mt-4">Submit</Button>
               </div>
             </div>
           </TabsContent>
@@ -47,6 +49,7 @@ const Index = () => {
 }`}
                   </pre>
                 </div>
+                <Button className="mt-4">Submit</Button>
               </div>
             </div>
           </TabsContent>
@@ -65,6 +68,7 @@ const Index = () => {
 }`}
                   </pre>
                 </div>
+                <Button className="mt-4">Submit</Button>
               </div>
             </div>
           </TabsContent>
@@ -83,6 +87,7 @@ const Index = () => {
 }`}
                   </pre>
                 </div>
+                <Button className="mt-4">Submit</Button>
               </div>
             </div>
           </TabsContent>
