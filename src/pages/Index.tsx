@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -11,14 +10,22 @@ const Index = () => {
     sqlMonitor: [],
     feedInsights: []
   });
-  const [autosysData, setAutosysData] = useState([]);
+  const [autosysData, setAutosysData] = useState({
+    boxJobInfo: [],
+    jobStats: [],
+    boxStats: [],
+    boxJobHierarchy: []
+  });
   const [businessData, setBusinessData] = useState([]);
   const [loading, setLoading] = useState({
     criticalBatch: false,
     dependentBatch: false,
     sqlMonitor: false,
     feedInsights: false,
-    autosys: false,
+    boxJobInfo: false,
+    jobStats: false,
+    boxStats: false,
+    boxJobHierarchy: false,
     business: false
   });
 
@@ -33,7 +40,10 @@ const Index = () => {
         dependentBatch: 'http://localhost:9007/dependent-batch',
         sqlMonitor: 'http://localhost:9007/sql-monitor',
         feedInsights: 'http://localhost:9007/feed-insights',
-        autosys: 'http://localhost:9007/autosys-insights',
+        boxJobInfo: 'http://localhost:9007/box-job-info',
+        jobStats: 'http://localhost:9007/job-statistics',
+        boxStats: 'http://localhost:9007/box-statistics',
+        boxJobHierarchy: 'http://localhost:9007/box-job-hierarchy',
         business: 'http://localhost:9007/business-insights'
       };
       
@@ -45,7 +55,10 @@ const Index = () => {
       if (tabType === 'dependentBatch') setBatchData(prev => ({ ...prev, dependent: Array.isArray(result) ? result : [result] }));
       if (tabType === 'sqlMonitor') setBatchData(prev => ({ ...prev, sqlMonitor: Array.isArray(result) ? result : [result] }));
       if (tabType === 'feedInsights') setBatchData(prev => ({ ...prev, feedInsights: Array.isArray(result) ? result : [result] }));
-      if (tabType === 'autosys') setAutosysData(Array.isArray(result) ? result : [result]);
+      if (tabType === 'boxJobInfo') setAutosysData(prev => ({ ...prev, boxJobInfo: Array.isArray(result) ? result : [result] }));
+      if (tabType === 'jobStats') setAutosysData(prev => ({ ...prev, jobStats: Array.isArray(result) ? result : [result] }));
+      if (tabType === 'boxStats') setAutosysData(prev => ({ ...prev, boxStats: Array.isArray(result) ? result : [result] }));
+      if (tabType === 'boxJobHierarchy') setAutosysData(prev => ({ ...prev, boxJobHierarchy: Array.isArray(result) ? result : [result] }));
       if (tabType === 'business') setBusinessData(Array.isArray(result) ? result : [result]);
       
     } catch (error) {
@@ -198,16 +211,68 @@ const Index = () => {
           
           <TabsContent value="autosys" className="mt-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Autosys Job Insights</h2>
-                <Button 
-                  onClick={() => handleSubmit('autosys')}
-                  disabled={loading.autosys}
-                >
-                  {loading.autosys ? 'Loading...' : 'Submit'}
-                </Button>
-              </div>
-              <DataTable data={autosysData} />
+              <h2 className="text-xl font-semibold mb-6">Autosys Job Insights</h2>
+              
+              <Tabs defaultValue="boxJobInfo" className="w-full">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="boxJobInfo">Box & Job Information</TabsTrigger>
+                  <TabsTrigger value="jobStats">Job Statistics</TabsTrigger>
+                  <TabsTrigger value="boxStats">Box Statistics</TabsTrigger>
+                  <TabsTrigger value="boxJobHierarchy">Box & Job Hierarchy</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="boxJobInfo" className="mt-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">Box & Job Information</h3>
+                    <Button 
+                      onClick={() => handleSubmit('boxJobInfo')}
+                      disabled={loading.boxJobInfo}
+                    >
+                      {loading.boxJobInfo ? 'Loading...' : 'Submit'}
+                    </Button>
+                  </div>
+                  <DataTable data={autosysData.boxJobInfo} />
+                </TabsContent>
+                
+                <TabsContent value="jobStats" className="mt-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">Job Statistics</h3>
+                    <Button 
+                      onClick={() => handleSubmit('jobStats')}
+                      disabled={loading.jobStats}
+                    >
+                      {loading.jobStats ? 'Loading...' : 'Submit'}
+                    </Button>
+                  </div>
+                  <DataTable data={autosysData.jobStats} />
+                </TabsContent>
+                
+                <TabsContent value="boxStats" className="mt-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">Box Statistics</h3>
+                    <Button 
+                      onClick={() => handleSubmit('boxStats')}
+                      disabled={loading.boxStats}
+                    >
+                      {loading.boxStats ? 'Loading...' : 'Submit'}
+                    </Button>
+                  </div>
+                  <DataTable data={autosysData.boxStats} />
+                </TabsContent>
+                
+                <TabsContent value="boxJobHierarchy" className="mt-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">Box & Job Hierarchy</h3>
+                    <Button 
+                      onClick={() => handleSubmit('boxJobHierarchy')}
+                      disabled={loading.boxJobHierarchy}
+                    >
+                      {loading.boxJobHierarchy ? 'Loading...' : 'Submit'}
+                    </Button>
+                  </div>
+                  <DataTable data={autosysData.boxJobHierarchy} />
+                </TabsContent>
+              </Tabs>
             </div>
           </TabsContent>
           
