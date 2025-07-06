@@ -5,38 +5,34 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useState } from "react";
 
 const Index = () => {
-  const [data1, setData1] = useState([]);
-  const [data2, setData2] = useState([]);
-  const [data3, setData3] = useState([]);
-  const [data4, setData4] = useState([]);
+  const [batchData, setBatchData] = useState([]);
+  const [autosysData, setAutosysData] = useState([]);
+  const [businessData, setBusinessData] = useState([]);
   const [loading, setLoading] = useState({
-    tab1: false,
-    tab2: false,
-    tab3: false,
-    tab4: false
+    batch: false,
+    autosys: false,
+    business: false
   });
 
-  const handleSubmit = async (tabNumber: number) => {
-    const tabKey = `tab${tabNumber}` as keyof typeof loading;
+  const handleSubmit = async (tabType: string) => {
+    const tabKey = tabType as keyof typeof loading;
     setLoading(prev => ({ ...prev, [tabKey]: true }));
     
     try {
       // Replace with your actual endpoint URLs
       const endpoints = {
-        1: 'http://localhost:9007/uat-batch-router',
-        2: 'http://localhost:9007/job-stat-hierarchy',
-        3: 'http://localhost:9007/your-endpoint-3',
-        4: 'http://localhost:9007/your-endpoint-4'
+        batch: 'http://localhost:9007/batch-insights',
+        autosys: 'http://localhost:9007/autosys-insights',
+        business: 'http://localhost:9007/business-insights'
       };
       
-      const response = await fetch(endpoints[tabNumber as keyof typeof endpoints]);
+      const response = await fetch(endpoints[tabType as keyof typeof endpoints]);
       const result = await response.json();
       
-      // Update the appropriate state based on tab number
-      if (tabNumber === 1) setData1(Array.isArray(result) ? result : [result]);
-      if (tabNumber === 2) setData2(Array.isArray(result) ? result : [result]);
-      if (tabNumber === 3) setData3(Array.isArray(result) ? result : [result]);
-      if (tabNumber === 4) setData4(Array.isArray(result) ? result : [result]);
+      // Update the appropriate state based on tab type
+      if (tabType === 'batch') setBatchData(Array.isArray(result) ? result : [result]);
+      if (tabType === 'autosys') setAutosysData(Array.isArray(result) ? result : [result]);
+      if (tabType === 'business') setBusinessData(Array.isArray(result) ? result : [result]);
       
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -110,73 +106,57 @@ const Index = () => {
   return (
     <div className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-center">API Data Visualizer</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center">Job Processing Dashboard</h1>
         
-        <Tabs defaultValue="tab1" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="tab1">Batch Router</TabsTrigger>
-            <TabsTrigger value="tab2">Job Hierarchy</TabsTrigger>
-            <TabsTrigger value="tab3">Endpoint 3</TabsTrigger>
-            <TabsTrigger value="tab4">Endpoint 4</TabsTrigger>
+        <Tabs defaultValue="batch" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="batch">Batch Insights</TabsTrigger>
+            <TabsTrigger value="autosys">Autosys Insights</TabsTrigger>
+            <TabsTrigger value="business">Business Insights</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="tab1" className="mt-6">
+          <TabsContent value="batch" className="mt-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Batch Router Data</h2>
+                <h2 className="text-xl font-semibold">Batch Processing Insights</h2>
                 <Button 
-                  onClick={() => handleSubmit(1)}
-                  disabled={loading.tab1}
+                  onClick={() => handleSubmit('batch')}
+                  disabled={loading.batch}
                 >
-                  {loading.tab1 ? 'Loading...' : 'Submit'}
+                  {loading.batch ? 'Loading...' : 'Submit'}
                 </Button>
               </div>
-              <DataTable data={data1} />
+              <DataTable data={batchData} />
             </div>
           </TabsContent>
           
-          <TabsContent value="tab2" className="mt-6">
+          <TabsContent value="autosys" className="mt-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Job Hierarchy Data</h2>
+                <h2 className="text-xl font-semibold">Autosys Job Insights</h2>
                 <Button 
-                  onClick={() => handleSubmit(2)}
-                  disabled={loading.tab2}
+                  onClick={() => handleSubmit('autosys')}
+                  disabled={loading.autosys}
                 >
-                  {loading.tab2 ? 'Loading...' : 'Submit'}
+                  {loading.autosys ? 'Loading...' : 'Submit'}
                 </Button>
               </div>
-              <DataTable data={data2} />
+              <DataTable data={autosysData} />
             </div>
           </TabsContent>
           
-          <TabsContent value="tab3" className="mt-6">
+          <TabsContent value="business" className="mt-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Endpoint 3 Data</h2>
+                <h2 className="text-xl font-semibold">Business Process Insights</h2>
                 <Button 
-                  onClick={() => handleSubmit(3)}
-                  disabled={loading.tab3}
+                  onClick={() => handleSubmit('business')}
+                  disabled={loading.business}
                 >
-                  {loading.tab3 ? 'Loading...' : 'Submit'}
+                  {loading.business ? 'Loading...' : 'Submit'}
                 </Button>
               </div>
-              <DataTable data={data3} />
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="tab4" className="mt-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Endpoint 4 Data</h2>
-                <Button 
-                  onClick={() => handleSubmit(4)}
-                  disabled={loading.tab4}
-                >
-                  {loading.tab4 ? 'Loading...' : 'Submit'}
-                </Button>
-              </div>
-              <DataTable data={data4} />
+              <DataTable data={businessData} />
             </div>
           </TabsContent>
         </Tabs>
