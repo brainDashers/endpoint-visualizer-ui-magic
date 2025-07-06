@@ -5,11 +5,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useState } from "react";
 
 const Index = () => {
-  const [batchData, setBatchData] = useState([]);
+  const [batchData, setBatchData] = useState({
+    critical: [],
+    dependent: [],
+    sqlMonitor: [],
+    feedInsights: []
+  });
   const [autosysData, setAutosysData] = useState([]);
   const [businessData, setBusinessData] = useState([]);
   const [loading, setLoading] = useState({
-    batch: false,
+    criticalBatch: false,
+    dependentBatch: false,
+    sqlMonitor: false,
+    feedInsights: false,
     autosys: false,
     business: false
   });
@@ -21,7 +29,10 @@ const Index = () => {
     try {
       // Replace with your actual endpoint URLs
       const endpoints = {
-        batch: 'http://localhost:9007/batch-insights',
+        criticalBatch: 'http://localhost:9007/critical-batch',
+        dependentBatch: 'http://localhost:9007/dependent-batch',
+        sqlMonitor: 'http://localhost:9007/sql-monitor',
+        feedInsights: 'http://localhost:9007/feed-insights',
         autosys: 'http://localhost:9007/autosys-insights',
         business: 'http://localhost:9007/business-insights'
       };
@@ -30,7 +41,10 @@ const Index = () => {
       const result = await response.json();
       
       // Update the appropriate state based on tab type
-      if (tabType === 'batch') setBatchData(Array.isArray(result) ? result : [result]);
+      if (tabType === 'criticalBatch') setBatchData(prev => ({ ...prev, critical: Array.isArray(result) ? result : [result] }));
+      if (tabType === 'dependentBatch') setBatchData(prev => ({ ...prev, dependent: Array.isArray(result) ? result : [result] }));
+      if (tabType === 'sqlMonitor') setBatchData(prev => ({ ...prev, sqlMonitor: Array.isArray(result) ? result : [result] }));
+      if (tabType === 'feedInsights') setBatchData(prev => ({ ...prev, feedInsights: Array.isArray(result) ? result : [result] }));
       if (tabType === 'autosys') setAutosysData(Array.isArray(result) ? result : [result]);
       if (tabType === 'business') setBusinessData(Array.isArray(result) ? result : [result]);
       
@@ -117,16 +131,68 @@ const Index = () => {
           
           <TabsContent value="batch" className="mt-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Batch Processing Insights</h2>
-                <Button 
-                  onClick={() => handleSubmit('batch')}
-                  disabled={loading.batch}
-                >
-                  {loading.batch ? 'Loading...' : 'Submit'}
-                </Button>
-              </div>
-              <DataTable data={batchData} />
+              <h2 className="text-xl font-semibold mb-6">Batch Processing Insights</h2>
+              
+              <Tabs defaultValue="critical" className="w-full">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="critical">Critical Batch</TabsTrigger>
+                  <TabsTrigger value="dependent">Dependent Batch</TabsTrigger>
+                  <TabsTrigger value="sqlMonitor">SQL Monitor</TabsTrigger>
+                  <TabsTrigger value="feedInsights">Feed Insights</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="critical" className="mt-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">Critical Batch Jobs</h3>
+                    <Button 
+                      onClick={() => handleSubmit('criticalBatch')}
+                      disabled={loading.criticalBatch}
+                    >
+                      {loading.criticalBatch ? 'Loading...' : 'Submit'}
+                    </Button>
+                  </div>
+                  <DataTable data={batchData.critical} />
+                </TabsContent>
+                
+                <TabsContent value="dependent" className="mt-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">Dependent Batch Jobs</h3>
+                    <Button 
+                      onClick={() => handleSubmit('dependentBatch')}
+                      disabled={loading.dependentBatch}
+                    >
+                      {loading.dependentBatch ? 'Loading...' : 'Submit'}
+                    </Button>
+                  </div>
+                  <DataTable data={batchData.dependent} />
+                </TabsContent>
+                
+                <TabsContent value="sqlMonitor" className="mt-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">SQL Monitor</h3>
+                    <Button 
+                      onClick={() => handleSubmit('sqlMonitor')}
+                      disabled={loading.sqlMonitor}
+                    >
+                      {loading.sqlMonitor ? 'Loading...' : 'Submit'}
+                    </Button>
+                  </div>
+                  <DataTable data={batchData.sqlMonitor} />
+                </TabsContent>
+                
+                <TabsContent value="feedInsights" className="mt-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">Feed Insights</h3>
+                    <Button 
+                      onClick={() => handleSubmit('feedInsights')}
+                      disabled={loading.feedInsights}
+                    >
+                      {loading.feedInsights ? 'Loading...' : 'Submit'}
+                    </Button>
+                  </div>
+                  <DataTable data={batchData.feedInsights} />
+                </TabsContent>
+              </Tabs>
             </div>
           </TabsContent>
           
